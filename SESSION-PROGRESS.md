@@ -57,3 +57,12 @@ Administrador (adiado pelo usuário) e links externos de compra/PRO. Banco, dom�
 ## Acesso de cliente (2026-10-06)
 - Cliente "Prof. Jullya" (WhatsApp 84 98604-9708, informado pelo usuário; não há campo de telefone em `access_codes`): código `JUL10-75P`, plano individual, limite 10 alunos, status ativo, criado no banco Neon de produção.
 - Novo script reutilizável `scripts/create-access.ts` / `npm run access:create -- --name "..." [--email] [--plan] [--limit] [--code]`: idempotente (reexecutar só relata o código existente), força limite 10 no plano individual, ignora títulos (Prof., Dr.) na geração do prefixo e resolve colisão de código em até 50 tentativas. Typecheck e lint passaram.
+
+## Portal do Responsável (2026-10-06)
+- Funcionalidade completa implementada: acesso somente leitura por código único, painel do professor (`/portal`), portal do responsável (`/responsavel`), reposição de aulas por solicitação e relatórios em PDF.
+- Migration `0001` (incremental, só CREATEs + `lessons.public_summary`) aplicada em: PostgreSQL local, banco isolado `evolucao_test` e Neon de produção.
+- Arquitetura: tabela própria `responsible_sessions` (não tocou em `sessions` existente), cookie `ev_responsavel` HttpOnly/SameSite=Lax/Secure em produção, tenancy server-side com FK composta `(access_code_id, student_id)`, rate limit reutilizado de `auth.ts`. Códigos `JOA-8K31` por `generateResponsibleCode`; portal desativável pelo professor; bloqueio/regeneração encerram sessões.
+- Páginas do responsável: `inicio`, `aulas` (com solicitação de reposição), `evolucao`, `financeiro`, `informacoes`, `bem-vindo` (primeiro acesso); PDF em `GET /api/responsavel/relatorios/[id]/pdf` respeitando as preferências `showReports` e a propriedade do relatório.
+- Painel do professor: toggles + textos informativos, lista de acessos com bloquear/reativar/regenerar/excluir, aberturas de horário de reposição e aprovação/rejeição de solicitações.
+- Validação: typecheck e lint sem erros; 4 testes unitários e 10 testes PostgreSQL passaram (3 novos para portal/reposição com tenancy e duplo agendamento bloqueado); build de produção passou com todas as rotas novas listadas.
+- Pendente para implantar: commit local e deploy/Vercel (migration já está no Neon). QA visual no navegador ainda não executado nesta sessão.

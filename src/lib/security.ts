@@ -7,6 +7,10 @@ export function generateCode(name: string, now = new Date()) {
   const first = normalizeCode(name.trim().split(/\s+/)[0]).replace(/[^A-Z]/g, "").slice(0, 3).padEnd(3, "X");
   return `${first}${String(now.getMonth() + 1).padStart(2, "0")}-${randomInt(10, 100)}${String.fromCharCode(65 + randomInt(26))}`;
 }
+export function generateResponsibleCode(name: string) {
+  const first = normalizeCode(name.trim().split(/\s+/)[0]).replace(/[^A-Z]/g, "").slice(0, 3).padEnd(3, "X");
+  return `${first}-${randomInt(10)}${String.fromCharCode(65 + randomInt(26))}${randomInt(10, 100)}`;
+}
 export function secret() {
   const value = process.env.SESSION_SECRET;
   if (!value || value.length < 32) throw new Error("SESSION_SECRET deve possuir pelo menos 32 caracteres.");

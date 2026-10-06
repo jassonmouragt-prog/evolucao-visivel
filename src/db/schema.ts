@@ -51,7 +51,7 @@ export const lessonPackages = pgTable("lesson_packages", {
 export const lessons = pgTable("lessons", {
   id: id(), accessCodeId: owner(), studentId: student(), packageId: uuid("package_id"), date: date("date").notNull(), startTime: text("start_time").notNull(), duration: integer("duration").notNull(),
   status: text("status", { enum: ["scheduled", "completed", "absent", "cancelled", "makeup"] }).notNull(), justifiedAbsence: boolean("justified_absence").notNull().default(false),
-  content: text("content").notNull().default(""), activities: text("activities").notNull().default(""), lessonRating: text("lesson_rating").notNull().default("Boa"),
+  content: text("content").notNull().default(""), publicSummary: text("public_summary").notNull().default(""), activities: text("activities").notNull().default(""), lessonRating: text("lesson_rating").notNull().default("Boa"),
   participation: text("participation").notNull().default("Boa"), achievement: text("achievement").notNull().default(""), difficulty: text("difficulty").notNull().default(""),
   homework: text("homework").notNull().default(""), nextFocus: text("next_focus").notNull().default(""), createdAt: created(), updatedAt: updated()
 }, t => [foreignKey({columns:[t.accessCodeId,t.studentId],foreignColumns:[students.accessCodeId,students.id]}).onDelete("cascade"),
@@ -82,3 +82,38 @@ export const reports = pgTable("reports", {
 export const activityLogs = pgTable("activity_logs", {
   id:id(),accessCodeId:owner(),message:text("message").notNull(),createdAt:created()
 },t=>[index("activity_owner_date_idx").on(t.accessCodeId,t.createdAt)]);
+
+export const responsibleContacts = pgTable("responsible_contacts", {
+  id:id(),accessCodeId:owner(),name:text("name").notNull(),phone:text("phone").notNull().default(""),email:text("email"),createdAt:created(),updatedAt:updated()
+},t=>[index("responsible_contacts_owner_idx").on(t.accessCodeId)]);
+export const responsibleStudentAccess = pgTable("responsible_student_access", {
+  id:id(),accessCodeId:owner(),responsibleId:uuid("responsible_id").notNull().references(()=>responsibleContacts.id,{onDelete:"cascade"}),studentId:student(),
+  code:text("code").notNull().unique(),status:text("status",{enum:["active","blocked","revoked"]}).notNull().default("active"),
+  createdAt:created(),updatedAt:updated(),lastAccessAt:timestamp("last_access_at",{withTimezone:true})
+},t=>[foreignKey({columns:[t.accessCodeId,t.studentId],foreignColumns:[students.accessCodeId,students.id]}).onDelete("cascade"),
+  index("responsible_access_student_idx").on(t.accessCodeId,t.studentId),index("responsible_access_responsible_idx").on(t.responsibleId)]);
+export const responsibleSessions = pgTable("responsible_sessions", {
+  id:id(),tokenHash:text("token_hash").notNull().unique(),
+  responsibleAccessId:uuid("responsible_access_id").notNull().references(()=>responsibleStudentAccess.id,{onDelete:"cascade"}),
+  expiresAt:timestamp("expires_at",{withTimezone:true}).notNull(),createdAt:created()
+},t=>[index("responsible_sessions_expiry_idx").on(t.expiresAt)]);
+export const portalSettings = pgTable("portal_settings", {
+  id:id(),accessCodeId:uuid("access_code_id").notNull().unique().references(()=>accessCodes.id,{onDelete:"cascade"}),
+  enabled:boolean("enabled").notNull().default(true),showFinance:boolean("show_finance").notNull().default(true),
+  showProgress:boolean("show_progress").notNull().default(true),showLessonContent:boolean("show_lesson_content").notNull().default(true),
+  showReports:boolean("show_reports").notNull().default(true),rulesPayment:text("rules_payment").notNull().default(""),
+  rulesCancellation:text("rules_cancellation").notNull().default(""),rulesReplacement:text("rules_replacement").notNull().default(""),
+  schedules:text("schedules").notNull().default(""),materials:text("materials").notNull().default(""),otherInfo:text("other_info").notNull().default(""),
+  createdAt:created(),updatedAt:updated()
+});
+export const makeupSlots = pgTable("makeup_slots", {
+  id:id(),accessCodeId:owner(),date:date("date").notNull(),startTime:text("start_time").notNull(),endTime:text("end_time").notNull(),
+  status:text("status",{enum:["available","requested","confirmed","unavailable"]}).notNull().default("available"),createdAt:created()
+},t=>[index("makeup_slots_owner_date_idx").on(t.accessCodeId,t.date),check("makeup_slot_times_valid",sql`${t.startTime} < ${t.endTime}`)]);
+export const makeupRequests = pgTable("makeup_requests", {
+  id:id(),accessCodeId:owner(),slotId:uuid("slot_id").notNull().references(()=>makeupSlots.id,{onDelete:"cascade"}),studentId:student(),
+  responsibleAccessId:uuid("responsible_access_id").notNull().references(()=>responsibleStudentAccess.id,{onDelete:"cascade"}),
+  status:text("status",{enum:["pending","approved","rejected","cancelled"]}).notNull().default("pending"),createdAt:created(),updatedAt:updated()
+},t=>[foreignKey({columns:[t.accessCodeId,t.studentId],foreignColumns:[students.accessCodeId,students.id]}).onDelete("cascade"),
+  index("makeup_requests_owner_status_idx").on(t.accessCodeId,t.status),
+  uniqueIndex("makeup_slot_one_pending").on(t.slotId).where(sql`${t.status} = 'pending'`)]);
