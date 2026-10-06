@@ -26,7 +26,7 @@ Servidor temporário do Playwright encerrado. Sem processos Node restantes. Banc
 Em algumas navegações automatizadas rápidas, o Next registrou `The destination stream closed early`. Todas as asserções passaram, incluindo o fluxo final e o administrador; não foi observado erro na interface. O registro fica preservado aqui para comparação com logs de uso real após implantação.
 
 ## Próxima ação recomendada
-Configurar o PostgreSQL externo, segredo, domínio e links na Vercel; aplicar migrations e criar administrador antes de publicar. O deploy remoto não foi realizado porque essas configurações não foram fornecidas.
+Criar a conta administrativa de produção (adiada por escolha do usuário) e configurar os links externos de compra/PRO. O sistema já está publicado na Vercel, com PostgreSQL externo e migrations aplicadas.
 
 ## Atualização da marca
 Logo oficial adicionada pelo usuário: `LOGO EVOLUÇÃO VISÍVEL.png`. Original preservado. Derivados otimizados claro/branco e ícone em `public/brand/`; origem registrada em `provenance.json`. Componente Brand compartilhado aplica a marca na landing, acesso, admin, sidebar, cabeçalho mobile e rodapé. PDF usa a marca oficial no cabeçalho de todas as páginas; favicon atualizado.
@@ -34,11 +34,16 @@ Logo oficial adicionada pelo usuário: `LOGO EVOLUÇÃO VISÍVEL.png`. Original 
 Validação da marca concluída: TypeScript, lint, teste PostgreSQL de relatório/PDF e build passaram. Asset da logo confirmado no file trace do endpoint PDF para produção/Vercel. Detector retornou []. Capturas de acesso, landing, dashboard desktop/mobile e PDF real baixado foram inspecionados. Sem overflow mobile. Servidor de desenvolvimento retomado em http://localhost:3000; PostgreSQL continua ativo.
 
 ## Configuração de produção pendente
-URL PostgreSQL real, domínio, SESSION_SECRET de produção, administrador e links externos de compra/PRO.
+Administrador (adiado pelo usuário) e links externos de compra/PRO. Banco, domínio Vercel e SESSION_SECRET já configurados.
 
-## Publicação — em andamento
-- GitHub autenticado como `jassonmouragt-prog`; repositório local inicializado em `main`.
-- Projeto Vercel `evolucao-visivel` criado no time `jason-3c4d`.
+## Publicação concluída
+- Repositório público: https://github.com/jassonmouragt-prog/evolucao-visivel, branch `main`, remote `origin` configurado.
+- Aplicação pública: https://evolucao-visivel.vercel.app.
+- Projeto Vercel `evolucao-visivel` no time `jason-3c4d`, conectado ao GitHub para deploys a partir de `main`.
 - PostgreSQL Neon `evolucao-visivel-db` provisionado no plano Free, região `gru1`, conectado somente a Production.
+- Migrations aplicadas no banco de produção. Conferência: zero administradores, acessos e alunos; nenhum seed executado.
+- SESSION_SECRET aleatório configurado como Secret na Vercel e APP_URL com o domínio público. Proteção de login da Vercel removida do projeto para acesso público; autenticação interna do professor/admin preservada.
 - `.env*`, `.vercel/`, logs e artefatos locais protegidos por ignore. Fotos RAW de `Arquivos Editáveis/` e skills instaladas pela integração não fazem parte da aplicação publicada.
 - Usuário escolheu configurar a conta de administrador depois da publicação.
+- Build remoto aprovado. Landing e acesso responderam HTTP 200 sem autenticação Vercel. Chromium confirmou landing pública, redirecionamentos de dashboard/admin e rejeição de código de desenvolvimento pelo banco de produção.
+- URL da implantação inicial: https://evolucao-visivel-k8kamdr8h-jason-3c4d.vercel.app.

@@ -2,6 +2,30 @@
 
 Sistema individual de acompanhamento para professores particulares. Next.js App Router, React, TypeScript strict, Tailwind, PostgreSQL, Drizzle, Zod e PDF no servidor. Preparado para Vercel com PostgreSQL externo.
 
+## Publicação
+
+- **Sistema público:** https://evolucao-visivel.vercel.app
+- **Entrada por código:** https://evolucao-visivel.vercel.app/acesso
+- **Administração:** https://evolucao-visivel.vercel.app/admin/login
+- **Repositório público:** https://github.com/jassonmouragt-prog/evolucao-visivel
+
+Projeto Vercel: `jason-3c4d/evolucao-visivel`, conectado à branch `main` do GitHub. PostgreSQL Neon no plano Free, região São Paulo (`gru1`), conectado ao ambiente Production. Migrations aplicadas. O banco de produção começou vazio, sem o seed de desenvolvimento.
+
+O administrador será configurado depois, conforme escolha do proprietário. Até criá-lo e cadastrar compradores, nenhum código de desenvolvimento libera acesso em produção. O segredo de sessão está configurado como variável privada na Vercel.
+
+### Criar o administrador no banco publicado
+
+Na máquina autorizada, com o projeto Vercel vinculado:
+
+```powershell
+vercel env pull .env.production.local --environment production --yes --scope jason-3c4d
+$env:ADMIN_EMAIL='seu-email@exemplo.com'
+$env:ADMIN_PASSWORD='use-uma-senha-longa-e-exclusiva'
+node --env-file=.env.production.local --import tsx scripts/create-admin.ts
+```
+
+Esse arquivo de ambiente é privado e ignorado pelo Git e pelo upload do deploy. Nunca o publique ou use o seed contra o banco de produção. Remova as variáveis de administrador do terminal após o comando.
+
 ## Rodar localmente
 
 Requisitos: Node.js 22 ou 24, npm e PostgreSQL 17. O Docker Compose fornece somente o banco de desenvolvimento, com limite de 256 MB.
