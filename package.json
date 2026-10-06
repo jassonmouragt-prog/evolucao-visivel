@@ -15,6 +15,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
+    "demo:seed": "tsx scripts/seed-demo.ts",
+    "demo:reset": "tsx scripts/seed-demo.ts --reset",
+    "access:create": "tsx scripts/create-access.ts",
     "admin:create": "tsx scripts/create-admin.ts"
   },
   "dependencies": {

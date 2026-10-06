@@ -47,3 +47,13 @@ Administrador (adiado pelo usuário) e links externos de compra/PRO. Banco, dom�
 - Usuário escolheu configurar a conta de administrador depois da publicação.
 - Build remoto aprovado. Landing e acesso responderam HTTP 200 sem autenticação Vercel. Chromium confirmou landing pública, redirecionamentos de dashboard/admin e rejeição de código de desenvolvimento pelo banco de produção.
 - URL da implantação inicial: https://evolucao-visivel-k8kamdr8h-jason-3c4d.vercel.app.
+
+## Acesso DEMO (2026-10-06)
+- Código público de demonstração: `DEM06-10H` (acesso ativo, plano individual, perfil Ana Beatriz).
+- `scripts/seed-demo.ts` cria dados fictícios completos no banco conectado (Neon produção por padrão): 3 alunos, 16 aulas, evolução, objetivos, pacotes, 3 pagamentos, 2 relatórios e atividade recente.
+- Idempotente: já existindo o código, apenas informa. `npm run demo:reset` (ou `demo:seed -- --reset`) apaga somente o acesso DEMO e recria os dados.
+- Login validado no site publicado: `/acesso` → `/dashboard` com "Olá, Ana" e stats 3/13/1/1. Typecheck e lint sem erros.
+
+## Acesso de cliente (2026-10-06)
+- Cliente "Prof. Jullya" (WhatsApp 84 98604-9708, informado pelo usuário; não há campo de telefone em `access_codes`): código `JUL10-75P`, plano individual, limite 10 alunos, status ativo, criado no banco Neon de produção.
+- Novo script reutilizável `scripts/create-access.ts` / `npm run access:create -- --name "..." [--email] [--plan] [--limit] [--code]`: idempotente (reexecutar só relata o código existente), força limite 10 no plano individual, ignora títulos (Prof., Dr.) na geração do prefixo e resolve colisão de código em até 50 tentativas. Typecheck e lint passaram.
