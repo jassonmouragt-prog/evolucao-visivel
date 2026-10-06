@@ -1,0 +1,11 @@
+import {test,after} from "node:test";
+import assert from "node:assert/strict";
+import {eq} from "drizzle-orm";
+import {database,closeDatabase} from "../../src/db";
+import {accessCodes,students} from "../../src/db/schema";
+import {createAccess} from "../../src/lib/admin-service";
+import {savePayment,ownedPayment,deletePayment} from "../../src/lib/payment-service";
+process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;process.env.SESSION_SECRET="integration-only-not-a-production-secret";
+if(!process.env.DATABASE_URL?.includes("evolucao_test"))throw new Error("Banco isolado obrigatório.");
+const ids:string[]=[];after(async()=>{for(const id of ids)await database().delete(accessCodes).where(eq(accessCodes.id,id));await closeDatabase();});
+test("financeiro valida dinheiro, pagamento, edição e isolamento",async()=>{const a=await createAccess({customerName:"A",customerEmail:null,plan:"individual",studentLimit:10,code:null});const b=await createAccess({customerName:"B",customerEmail:null,plan:"individual",studentLimit:10,code:null});ids.push(a.id,b.id);const [s]=await database().insert(students).values({accessCodeId:a.id,name:"Aluno",grade:"8",subject:"Matemática",startDate:"2026-10-01"}).returning();const data={studentId:s.id,description:"Pacote outubro",amount:320,dueDate:"2026-10-10",paidAt:null,paymentMethod:"Pix",status:"pending" as const};const row=await savePayment(a.id,data);assert.equal(row.amount,"320.00");await assert.rejects(()=>ownedPayment(b.id,row.id),/não encontrado/);await assert.rejects(()=>savePayment(b.id,data,row.id),/não encontrado/);await assert.rejects(()=>deletePayment(b.id,row.id),/não encontrado/);await assert.rejects(()=>savePayment(a.id,{...data,status:"paid"}));const paid=await savePayment(a.id,{...data,status:"paid",paidAt:"2026-10-10"},row.id);assert.equal(paid.status,"paid");await deletePayment(a.id,row.id);await assert.rejects(()=>ownedPayment(a.id,row.id),/não encontrado/);});

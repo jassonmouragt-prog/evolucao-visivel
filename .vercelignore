@@ -1,0 +1,13 @@
+.env*
+.git/
+.next/
+node_modules/
+.impeccable/
+test-results/
+playwright-report/
+*.log
+*.tsbuildinfo
+LOGO EVOLUÇÃO VISÍVEL.png
+Arquivos Editáveis/
+.agents/
+skills-lock.json

@@ -1,0 +1,4 @@
+import { Brand } from "@/components/ui";
+import { ActionForm, Field } from "@/components/action-form";
+import { teacherLoginAction } from "@/app/actions";
+export default function AccessPage(){return <main className="flex min-h-screen flex-col items-center justify-center px-5 py-12"><div className="mb-10"><Brand/></div><section className="panel w-full max-w-md p-8"><h1 className="text-2xl">Acesse seu painel</h1><p className="muted mb-8 mt-3">Digite o código recebido após sua compra.</p><ActionForm action={teacherLoginAction} submit="Entrar no Evolução Visível"><Field name="code" label="Código de acesso" placeholder="EX: PRI10-42M" required/></ActionForm><p className="muted mt-7 text-center text-xs">Seu código é pessoal e está vinculado ao seu acesso.</p></section><p className="muted mt-8 text-center text-sm">Acompanhe cada aula. Registre cada avanço.<br/>Mostre a evolução.</p></main>;}

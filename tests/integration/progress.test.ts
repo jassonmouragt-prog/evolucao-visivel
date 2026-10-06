@@ -1,0 +1,11 @@
+import {test,after} from "node:test";
+import assert from "node:assert/strict";
+import {eq} from "drizzle-orm";
+import {database,closeDatabase} from "../../src/db";
+import {accessCodes,students} from "../../src/db/schema";
+import {createAccess} from "../../src/lib/admin-service";
+import {saveProgress,saveGoal} from "../../src/lib/progress-service";
+process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;process.env.SESSION_SECRET="integration-only-not-a-production-secret";
+if(!process.env.DATABASE_URL?.includes("evolucao_test"))throw new Error("Banco isolado obrigatório.");
+const ids:string[]=[];after(async()=>{for(const id of ids)await database().delete(accessCodes).where(eq(accessCodes.id,id));await closeDatabase();});
+test("histórico de evolução e objetivos são manuais e isolados",async()=>{const a=await createAccess({customerName:"A",customerEmail:null,plan:"individual",studentLimit:10,code:null});const b=await createAccess({customerName:"B",customerEmail:null,plan:"individual",studentLimit:10,code:null});ids.push(a.id,b.id);const [s]=await database().insert(students).values({accessCodeId:a.id,name:"Aluno",grade:"8",subject:"Matemática",startDate:"2026-10-01"}).returning();const data={studentId:s.id,date:"2026-10-01",comprehension:2,autonomy:3,participation:3,organization:4,concentration:2,activityCompletion:3,mainImprovement:"Autonomia",attentionPoint:"Leitura"};const first=await saveProgress(a.id,data);const second=await saveProgress(a.id,{...data,comprehension:4});assert.notEqual(first.id,second.id);assert.equal(second.comprehension,4);await assert.rejects(()=>saveProgress(b.id,data),/não encontrado/);await assert.rejects(()=>saveProgress(a.id,{...data,comprehension:6}));const goal=await saveGoal(a.id,{studentId:s.id,title:"Interpretar problemas",description:"",targetDate:null,progress:2,status:"ongoing"});await assert.rejects(()=>saveGoal(b.id,{studentId:s.id,title:"Alterado",description:"",targetDate:null,progress:5,status:"achieved"},goal.id),/não encontrado/);const updated=await saveGoal(a.id,{studentId:s.id,title:goal.title,description:"",targetDate:null,progress:5,status:"achieved"},goal.id);assert.equal(updated.status,"achieved");});

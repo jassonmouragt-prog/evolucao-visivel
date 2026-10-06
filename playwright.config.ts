@@ -1,0 +1,2 @@
+import {defineConfig} from "@playwright/test";
+export default defineConfig({testDir:"./tests/e2e",workers:1,fullyParallel:false,timeout:45000,use:{baseURL:"http://localhost:3000",headless:true,trace:"retain-on-failure"},webServer:{command:"npm run start",url:"http://localhost:3000",reuseExistingServer:false,timeout:60000,env:{DATABASE_URL:process.env.TEST_DATABASE_URL??"",SESSION_SECRET:"e2e-only-not-a-production-secret-123456",APP_URL:"http://localhost:3000",NODE_ENV:"production"}}});

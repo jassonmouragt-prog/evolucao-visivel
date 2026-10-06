@@ -1,0 +1,13 @@
+import {test,after} from "node:test";
+import assert from "node:assert/strict";
+import {eq} from "drizzle-orm";
+import {database,closeDatabase} from "../../src/db";
+import {accessCodes,students,teacherProfiles} from "../../src/db/schema";
+import {createAccess} from "../../src/lib/admin-service";
+import {saveStudent,archiveStudent,saveProfile} from "../../src/lib/student-service";
+process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;
+process.env.SESSION_SECRET="integration-only-not-a-production-secret";
+if(!process.env.DATABASE_URL?.includes("evolucao_test"))throw new Error("Banco de testes isolado obrigatório.");
+const ids:string[]=[];after(async()=>{for(const id of ids)await database().delete(accessCodes).where(eq(accessCodes.id,id));await closeDatabase();});
+export const studentData={name:"Aluno teste",birthDate:null,age:null,grade:"8º ano",school:"",subject:"Matemática",startDate:"2026-10-01",frequency:"Semanal",responsibleName:"Ana",responsiblePhone:"",responsibleEmail:null,mainGoal:"Aprender",difficulties:"",strengths:"",notes:""};
+test("onboarding, 10 alunos, concorrência, arquivamento e isolamento de edição",async()=>{const a=await createAccess({customerName:"Prof A",customerEmail:null,plan:"individual",studentLimit:10,code:null});const b=await createAccess({customerName:"Prof B",customerEmail:null,plan:"individual",studentLimit:10,code:null});ids.push(a.id,b.id);await saveProfile(a.id,{name:"Prof A",professionalName:"Aulas A",phone:"",email:null,mainSubject:"Matemática",additionalSubjects:"",photoUrl:null,logoUrl:null});const [profile]=await database().select().from(teacherProfiles).where(eq(teacherProfiles.accessCodeId,a.id));assert.equal(profile.onboardingCompleted,true);for(let i=0;i<9;i++)await saveStudent(a.id,{...studentData,name:`Aluno ${i}`});const results=await Promise.allSettled([saveStudent(a.id,studentData),saveStudent(a.id,studentData)]);assert.equal(results.filter(v=>v.status==="fulfilled").length,1);assert.equal(results.filter(v=>v.status==="rejected").length,1);const [s]=await database().select().from(students).where(eq(students.accessCodeId,a.id));await assert.rejects(()=>saveStudent(b.id,{...studentData,name:"Invadido"},s.id),/não encontrado/);await archiveStudent(a.id,s.id);const replacement=await saveStudent(a.id,studentData);assert.ok(replacement.id);await assert.rejects(()=>archiveStudent(a.id,s.id,true),/limite/);});

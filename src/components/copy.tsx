@@ -1,0 +1,5 @@
+"use client";
+import { useState } from "react";
+import { Copy, Check } from "lucide-react";
+export function CopyButton({text,label="Copiar"}:{text:string;label?:string}) { const [copied,setCopied]=useState(false);const [error,setError]=useState(false);return <><button className="button secondary" onClick={async()=>{try{await navigator.clipboard.writeText(text);setCopied(true);setTimeout(()=>setCopied(false),2500);}catch{setError(true);}}}>{copied?<Check size={16}/>:<Copy size={16}/>} {copied?"Copiado!":label}</button>{error&&<p role="alert" className="text-sm text-red-800">Não foi possível copiar. Selecione o texto e copie manualmente.</p>}</>; }
+export function EditableMessage({text,label="Mensagem"}:{text:string;label?:string}) {const [value,setValue]=useState(text);return <div className="space-y-4"><div className="field"><label>{label}<textarea className="mt-3" value={value} onChange={e=>setValue(e.target.value)} rows={7}/></label></div><CopyButton text={value} label="Copiar mensagem"/></div>;}

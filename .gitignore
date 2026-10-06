@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env*
+!.env.example
+coverage/
+*.tsbuildinfo
+.impeccable/review/
+test-results/
+playwright-report/
+.vercel/
+*.log
+/Arquivos Editáveis/
+.agents/
+skills-lock.json

@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function StudentTabs({id,active}:{id:string;active:string}){return <nav className="tabs" aria-label="Acompanhamento do aluno">{[{name:"Visão geral",path:""},{name:"Aulas",path:"/aulas"},{name:"Evolução",path:"/evolucao"},{name:"Pacote",path:"/pacote"},{name:"Financeiro",path:"/financeiro"},{name:"Relatórios",path:"/relatorios"}].map(t=><Link className={t.name===active?"active":""} aria-current={t.name===active?"page":undefined} key={t.name} href={`/alunos/${id}${t.path}`}>{t.name}</Link>)}</nav>;}

@@ -1,0 +1,10 @@
+{
+  "source": "LOGO EVOLUÇÃO VISÍVEL.png",
+  "origin": "Artwork supplied by the project owner",
+  "derivatives": {
+    "logo-horizontal.png": "Original symbol and wordmark rearranged horizontally; transparent padding removed; resized.",
+    "logo-horizontal-white.png": "Same horizontal arrangement; white RGB with original alpha for dark surfaces.",
+    "icon.png": "Original symbol resized on a white square for browser icons."
+  },
+  "reproduce": "node scripts/prepare-logo.mjs"
+}

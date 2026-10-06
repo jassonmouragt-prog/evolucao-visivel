@@ -1,0 +1,14 @@
+import {test,after} from "node:test";
+import assert from "node:assert/strict";
+import {eq} from "drizzle-orm";
+import {database,closeDatabase} from "../../src/db";
+import {accessCodes,students,sessions,lessons} from "../../src/db/schema";
+import {createAccess,changeAccessStatus} from "../../src/lib/admin-service";
+import {ownedStudent} from "../../src/lib/tenancy";
+process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;
+process.env.SESSION_SECRET="integration-only-not-a-production-secret";
+if(!process.env.DATABASE_URL||!process.env.DATABASE_URL.includes("evolucao_test"))throw new Error("Use banco isolado evolucao_test via TEST_DATABASE_URL.");
+const ids:string[]=[];
+after(async()=>{for(const id of ids)await database().delete(accessCodes).where(eq(accessCodes.id,id));await closeDatabase();});
+test("admin cria código único, rejeita colisão e bloqueio revoga sessão",async()=>{const r=await createAccess({customerName:"Priscila",customerEmail:null,plan:"individual",studentLimit:99,code:"PRI1025"});ids.push(r.id);assert.equal(r.studentLimit,10);await assert.rejects(()=>createAccess({customerName:"Outra",customerEmail:null,plan:"individual",studentLimit:10,code:"PRI1025"}),/já existe/);await database().insert(sessions).values({accessCodeId:r.id,tokenHash:crypto.randomUUID(),expiresAt:new Date(Date.now()+10000)});await changeAccessStatus(r.id,"blocked");const rows=await database().select().from(sessions).where(eq(sessions.accessCodeId,r.id));assert.equal(rows.length,0);const [access]=await database().select().from(accessCodes).where(eq(accessCodes.id,r.id));assert.equal(access.status,"blocked");});
+test("professor A não abre aluno B e banco rejeita FK cruzada",async()=>{const a=await createAccess({customerName:"A",customerEmail:null,plan:"individual",studentLimit:10,code:null});const b=await createAccess({customerName:"B",customerEmail:null,plan:"individual",studentLimit:10,code:null});ids.push(a.id,b.id);const [s]=await database().insert(students).values({accessCodeId:b.id,name:"Aluno B",grade:"8º ano",subject:"Matemática",startDate:"2026-10-01"}).returning();assert.equal((await ownedStudent(b.id,s.id)).name,"Aluno B");await assert.rejects(()=>ownedStudent(a.id,s.id),/não encontrado/);await assert.rejects(()=>database().insert(lessons).values({accessCodeId:a.id,studentId:s.id,date:"2026-10-05",startTime:"14:00",duration:60,status:"completed"}));});

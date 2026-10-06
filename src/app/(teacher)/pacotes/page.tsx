@@ -1,0 +1,8 @@
+import Link from "next/link";
+import {and,desc,eq} from "drizzle-orm";
+import {database} from "@/db";
+import {lessonPackages,students} from "@/db/schema";
+import {requireTeacher} from "@/lib/auth";
+import {PageHead,EmptyState} from "@/components/ui";
+import {money,formatDate} from "@/lib/format";
+export default async function PackagesPage(){const access=await requireTeacher();const rows=await database().select({pkg:lessonPackages,name:students.name}).from(lessonPackages).innerJoin(students,and(eq(students.id,lessonPackages.studentId),eq(students.accessCodeId,access.id))).where(and(eq(lessonPackages.accessCodeId,access.id),eq(lessonPackages.status,"current"))).orderBy(desc(lessonPackages.createdAt)).limit(1000);return <><PageHead title="Pacotes" description="Veja os saldos e prepare a próxima renovação."/>{rows.length?<div className="grid gap-4 lg:grid-cols-2">{rows.map(({pkg:p,name})=><article className="panel" key={p.id}><div className="flex items-center justify-between gap-3"><h2>{name}</h2>{p.totalLessons-p.usedLessons<=2&&<span className="badge warning">Renovação próxima</span>}</div><p className="my-4">{p.usedLessons}/{p.totalLessons} aulas · {p.totalLessons-p.usedLessons} restantes · {money(p.value)}</p><p className="muted mb-5 text-sm">Renovação: {formatDate(p.renewalDate)}</p><Link href={`/alunos/${p.studentId}/pacote`} className="button secondary">Ver / renovar pacote</Link></article>)}</div>:<EmptyState title="Seu primeiro pacote" description="No perfil do aluno, registre o número de aulas contratadas e acompanhe o saldo." href="/alunos" action="Escolher aluno"/>}</>;}

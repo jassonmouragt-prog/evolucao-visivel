@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06",
+  "title": "Design System: Evolução Visível",
+  "extensions": {
+    "brandAssets": {
+      "source": "LOGO EVOLUÇÃO VISÍVEL.png",
+      "lightSurface": "public/brand/logo-horizontal.png",
+      "darkSurface": "public/brand/logo-horizontal-white.png",
+      "icon": "public/brand/icon.png",
+      "provenance": "public/brand/provenance.json"
+    },
+    "colorMeta": {
+      "navy": { "role": "primary", "displayName": "Marinho estrutural" },
+      "blue": { "role": "secondary", "displayName": "Azul de apoio" },
+      "cream": { "role": "neutral", "displayName": "Fundo off-white" },
+      "white": { "role": "neutral", "displayName": "Superfície branca" },
+      "muted": { "role": "neutral", "displayName": "Texto secundário" }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Título de página", "purpose": "h1 da interface de trabalho." },
+      "title": { "displayName": "Título de seção", "purpose": "h2 de painéis e seções." },
+      "body": { "displayName": "Corpo", "purpose": "Texto da interface com a família de sistema existente." }
+    },
+    "shadows": [
+      { "name": "panel", "value": "0 3px 12px #19354b03", "purpose": "Sombra ambiental dos painéis." },
+      { "name": "button-hover", "value": "0 3px 8px #19354b12", "purpose": "Sombra dos botões em hover." }
+    ],
+    "motion": [
+      { "name": "button-transition", "value": "background .15s, box-shadow .15s", "purpose": "Transição existente dos botões; removida com prefers-reduced-motion: reduce." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal; estados extraídos do CSS, sem revisão adicional de capturas.",
+      "html": "<button class=\"ds-primary\">Registrar aula</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:10px;background:var(--color-navy,#19354b);color:white;font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif);font-weight:600;font-size:14px;border:1px solid var(--color-navy,#19354b);cursor:pointer;transition:background .15s,box-shadow .15s}.ds-primary:hover{background:#2b506c;box-shadow:0 3px 8px #19354b12}.ds-primary:focus-visible{outline:3px solid #5883a3;outline-offset:3px}.ds-primary:disabled{cursor:wait;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação de apoio em superfície branca.",
+      "html": "<button class=\"ds-secondary\">Cadastrar aluno</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:10px;background:white;color:var(--color-navy,#19354b);font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif);font-weight:600;font-size:14px;border:1px solid #dce3e7;cursor:pointer;transition:background .15s,box-shadow .15s}.ds-secondary:hover{background:#eef4f8;box-shadow:0 3px 8px #19354b12}.ds-secondary:focus-visible{outline:3px solid #5883a3;outline-offset:3px}.ds-secondary:disabled{cursor:wait;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}}"
+    },
+    {
+      "name": "Botão de perigo",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Variante danger existente; hover herdado da regra geral, sem alteração documental da implementação.",
+      "html": "<button class=\"ds-danger\">Excluir</button>",
+      "css": ".ds-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:10px;background:#fff;color:#a33535;font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif);font-weight:600;font-size:14px;border:1px solid #edcaca;cursor:pointer;transition:background .15s,box-shadow .15s}.ds-danger:hover{background:#2b506c;box-shadow:0 3px 8px #19354b12}.ds-danger:focus-visible{outline:3px solid #5883a3;outline-offset:3px}.ds-danger:disabled{cursor:wait;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-danger{transition:none}}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Label e controle empilhados com foco global.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-name\">Nome</label><input id=\"ds-name\" placeholder=\"Nome do aluno\" /></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:7px;min-width:0;font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif)}.ds-field label{color:#2b4559;font-size:13px;font-weight:600}.ds-field input{background:#fff;border:1px solid #cbd7df;border-radius:9px;padding:11px 12px;min-height:44px;width:100%;color:var(--color-navy,#19354b);font-family:inherit;font-size:15px;caret-color:var(--color-blue,#315f83)}.ds-field input::placeholder{color:#627785}.ds-field input:focus-visible{outline:3px solid #5883a3;outline-offset:3px}"
+    },
+    {
+      "name": "Painel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Contêiner branco com borda e sombra ambiental; não é um controle interativo.",
+      "html": "<section class=\"ds-panel\"><h2>Próximas aulas</h2></section>",
+      "css": ".ds-panel{background:white;border:1px solid #e0e6e8;border-radius:16px;padding:24px;box-shadow:0 3px 12px #19354b03;color:var(--color-navy,#19354b);font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif);font-size:15px}.ds-panel h2{font-size:20px;font-weight:650;letter-spacing:-.015em;text-wrap:balance}@media(max-width:767px){.ds-panel{padding:18px}}"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Indicador informativo com as quatro variantes existentes; sem estados interativos inventados.",
+      "html": "<span class=\"ds-badge\">Padrão</span> <span class=\"ds-badge ds-success\">Sucesso</span> <span class=\"ds-badge ds-warning\">Atenção</span> <span class=\"ds-badge ds-badge-danger\">Perigo</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;background:#eaf1f6;color:#315b78;font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif);font-size:12px;font-weight:600}.ds-badge.ds-success{background:#eaf4ed;color:#376b4c}.ds-badge.ds-warning{background:#fbf1df;color:#825e22}.ds-badge.ds-badge-danger{background:#f9eaea;color:#9e4444}"
+    },
+    {
+      "name": "Navegação da sidebar",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Amostra de links da sidebar marinho, com ativo e hover existentes.",
+      "html": "<nav class=\"ds-sidebar\" aria-label=\"Principal\"><a class=\"ds-nav-link ds-active\" href=\"/dashboard\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10\"/><path d=\"M9 21v-8h6v8\"/></svg>Início</a><a class=\"ds-nav-link\" href=\"/alunos\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/></svg>Alunos</a></nav>",
+      "css": ".ds-sidebar{width:248px;padding:20px;background:var(--color-navy,#19354b);font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif)}.ds-nav-link{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:9px;color:#d7e2ea;font-size:14px;min-height:44px;text-decoration:none}.ds-nav-link+.ds-nav-link{margin-top:4px}.ds-nav-link:hover,.ds-nav-link.ds-active{background:#304d64;color:white}.ds-nav-link:focus-visible{outline:3px solid #5883a3;outline-offset:3px}"
+    },
+    {
+      "name": "Navegação mobile — ação central",
+      "kind": "nav",
+      "refersTo": "mobile-nav",
+      "description": "Amostra de + Aula; a barra completa tem cinco colunas e fica fixa no rodapé mobile. A amostra permanece no fluxo do painel de documentação.",
+      "html": "<nav class=\"ds-mobile\" aria-label=\"Navegação mobile\"><a class=\"ds-add-lesson\" href=\"/aulas/nova\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg>+ Aula</a></nav>",
+      "css": ".ds-mobile{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--color-slate-200);background:white;padding:8px 8px max(env(safe-area-inset-bottom),8px);font-family:var(--font-sans,\"Segoe UI\",system-ui,sans-serif)}.ds-add-lesson{grid-column:3;display:flex;min-height:52px;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:12px;font-size:11px;font-weight:600;background:var(--color-navy,#19354b);color:white;text-decoration:none}.ds-add-lesson:focus-visible{outline:3px solid #5883a3;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Caderno profissional de acompanhamento",
+    "overview": "A identidade é profissional, amigável e discreta: marinho estrutura a navegação e as ações, enquanto o fundo off-white e os painéis brancos tornam o conteúdo fácil de percorrer. A tipografia de trabalho e os detalhes suaves preservam a clareza sem estética infantil ou densidade de ERP.\n\nEsta documentação extrai a implementação de `src/app/globals.css`, `src/components/navigation.tsx` e `src/components/ui.tsx`, com contexto de `PRODUCT.md` e `.impeccable/surface.md`. O modo Operate pertence ao brief da superfície. A revisão de quatro capturas foi registrada pela revisão independente como **SHIP no escopo visual**, com detector `[]`; não houve nova inspeção de capturas nesta documentação. Estados descritos abaixo são evidência de código, não comprovação de revisão visual desses estados.",
+    "keyCharacteristics": [
+      "Marinho estrutural, azul de apoio e superfícies claras.",
+      "Tipografia de sistema, hierarquia compacta e numerais tabulares.",
+      "Bordas suaves, cantos arredondados e sombras discretas.",
+      "Sidebar no desktop e navegação inferior fixa no mobile."
+    ],
+    "rules": [],
+    "dos": [
+      "**Do** preservar marinho estrutural, azul de apoio, fundo off-white e superfícies brancas.",
+      "**Do** manter a tipografia de trabalho existente e numerais tabulares nos indicadores.",
+      "**Do** reutilizar foco visível, alturas mínimas e adaptação da navegação já implementados.",
+      "**Do** distinguir evidência de código de estados efetivamente revisados em capturas."
+    ],
+    "donts": [
+      "**Don't** introduzir estética infantil, excesso de elementos escolares ou densidade de ERP.",
+      "**Don't** inventar rampas de cor, tokens ou estados para completar a documentação.",
+      "**Don't** tratar o SHIP visual informado como validação de outros estados ou funcionalidades."
+    ]
+  }
+}

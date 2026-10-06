@@ -1,0 +1,1 @@
+export default function Loading(){return <div role="status" aria-label="Carregando" className="animate-pulse"><div className="mb-8 h-9 w-64 rounded-lg bg-slate-200"/><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{[1,2,3,4].map(n=><div key={n} className="h-30 rounded-xl bg-slate-200"/>)}</div><div className="mt-8 h-64 rounded-xl bg-slate-200"/></div>;}
